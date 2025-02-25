@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: .
+    ports:
+      - 8000:3000
+    volumes:
+      - .:/app
+      - /app/node_modules   # Prevents overwriting node_modules inside the container
+
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      # Creates a default database when the container starts.
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      # Sets the password for the root user.
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - .dbdata:/var/lib/mysql
