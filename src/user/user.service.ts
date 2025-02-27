@@ -12,4 +12,10 @@ export class UserService {
   async all(): Promise<User[]> {
     return this.userRepository.find();
   }
+
+  async findOne(condition): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: condition,
+    });
+  }
 }
