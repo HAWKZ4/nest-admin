@@ -69,4 +69,13 @@ export class AuthController {
 
     return user;
   }
+
+  @Post('logout')
+  logout(@Res() response: Response) {
+    response.clearCookie('jwt');
+
+    response.send({
+      message: 'Logout',
+    });
+  }
 }
