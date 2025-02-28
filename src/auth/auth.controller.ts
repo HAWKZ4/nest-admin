@@ -45,7 +45,7 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() body, @Res({ passthrough: true }) response: Response) {
+  async login(@Body() body, @Res() response: Response) {
     const { email, password } = body;
     const user = await this.userService.findOne({ email });
 
