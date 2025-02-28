@@ -16,7 +16,7 @@ async function bootstrap() {
     );
   }
 
-  const backendPort = configService.get<number>('BACKEND_PORT') ?? 8000;
+  const backendPort = configService.get<number>('BACKEND_PORT') ?? 3000;
 
   app.use(cookieParser());
 
