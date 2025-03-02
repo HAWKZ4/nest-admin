@@ -10,7 +10,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { AuthService } from './auth.service';
 import { UserService } from './../user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { RegisterDto } from './dto/register.dto';
@@ -22,7 +21,6 @@ import { AuthGuard } from './auth.guard';
 @Controller()
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
@@ -41,7 +39,7 @@ export class AuthController {
       10,
     );
     const hashedPassword = await bcrypt.hash(password, salt);
-    return this.authService.create({
+    return this.userService.create({
       first_name,
       last_name,
       email,

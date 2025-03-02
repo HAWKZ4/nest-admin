@@ -18,4 +18,7 @@ export class UserService {
       where: condition,
     });
   }
+  async create(data): Promise<User> {
+    return this.userRepository.save(data);
+  }
 }
