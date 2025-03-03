@@ -3,80 +3,47 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
-  NotFoundException,
   Post,
   Res,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { UserService } from './../user/user.service';
-import { ConfigService } from '@nestjs/config';
 import { RegisterDto } from './dto/register.dto';
-import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
-import { AuthGuard } from './auth.guard';
+import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
 export class AuthController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   async register(@Body() body: RegisterDto) {
-    const { first_name, last_name, email, password, password_confirm } = body;
-
-    if (password !== password_confirm) {
-      throw new BadRequestException('Passwords do not match!');
-    }
-
-    const salt = parseInt(
-      this.configService.get<string>('BCRYPT_SALT') ?? '10',
-      10,
-    );
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return this.userService.create({
-      first_name,
-      last_name,
-      email,
-      password: hashedPassword,
-    });
+    return this.authService.register(body);
   }
 
   @Post('login')
-  async login(@Body() body, @Res({ passthrough: true }) response: Response) {
+  async login(
+    @Body() body: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const { email, password } = body;
-    const user = await this.userService.findOne({ email });
+    const user = await this.authService.validateUser(email, password);
 
     if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!(await bcrypt.compare(password, user.password))) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const jwt = await this.jwtService.signAsync({ id: user.id });
-    response.cookie('jwt', jwt, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'strict',
-    });
-
+    const jwt = await this.authService.generateToken(user.id);
+    this.authService.setAuthCookie(response, jwt);
     return user;
   }
 
-  @UseGuards(AuthGuard)
   @Post('logout')
-  logout(@Res() response: Response) {
-    response.clearCookie('jwt');
-
-    response.send({
-      message: 'Logout',
+  async logout(response: Response) {
+    this.authService.clearAuthCookie(response);
+    response.status(200).send({
+      message: 'Logout succeeded',
     });
   }
 }
