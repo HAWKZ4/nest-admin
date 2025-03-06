@@ -6,9 +6,12 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   Req,
   UseGuards,
   UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './model/user.entity';
@@ -16,6 +19,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { AuthRequest } from 'src/auth/auth-request.interface';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PaginationDto } from 'src/utils/dto/pagination.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -23,8 +27,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('users')
-  async all(): Promise<User[]> {
-    return this.userService.all();
+  // We didn't specify a type because ts infers it from paginate()
+  async getAllUsers(@Query() paginationDto: PaginationDto) {
+    return this.userService.getAll(paginationDto);
   }
 
   @UseGuards(AuthGuard)

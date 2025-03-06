@@ -10,6 +10,8 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { hashPassword } from 'src/utils/bcrypt.helper';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PaginationDto } from 'src/utils/dto/pagination.dto';
+import { paginate } from 'src/utils/pagination';
 
 @Injectable()
 export class UserService {
@@ -18,8 +20,10 @@ export class UserService {
     private readonly configService: ConfigService,
   ) {}
 
-  async all(): Promise<User[]> {
-    return this.userRepository.find();
+  async getAll(data: PaginationDto) {
+    const { page = 1, limit = 10 } = data;
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    return await paginate(queryBuilder, page, limit);
   }
 
   async findOne(condition: object): Promise<User | null> {
