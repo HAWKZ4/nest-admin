@@ -73,9 +73,7 @@ export class UserService {
   }
 
   async delete(id: number) {
-    console.log(id);
     const user = await this.findOne({ id });
-    console.log(user);
     if (!user) {
       throw new NotFoundException('User not found');
     }
