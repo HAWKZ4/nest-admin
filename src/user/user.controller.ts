@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   Req,
   UseGuards,
@@ -44,6 +45,7 @@ export class UserController {
 
   // Adjust guard later to restrict access
   @UseGuards(AuthGuard)
+  @Post('/users')
   async createUser(@Body() body: CreateUserDTO) {
     return this.userService.create(body);
   }
