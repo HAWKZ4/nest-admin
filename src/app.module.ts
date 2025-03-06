@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { JwtMiddleware } from './auth/jwt.middleware';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { JwtMiddleware } from './auth/jwt.middleware';
       }),
     }),
     AuthModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
