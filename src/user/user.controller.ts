@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Req,
   UseGuards,
   UseInterceptors,
@@ -13,6 +14,7 @@ import { User } from './model/user.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { AuthRequest } from 'src/auth/auth-request.interface';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -40,5 +42,11 @@ export class UserController {
   @UseGuards(AuthGuard)
   async createUser(@Body() body: CreateUserDTO) {
     return this.userService.create(body);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('/users/:id')
+  async updateUser(@Param('id') id: number, @Body() body: UpdateUserDto) {
+    return this.userService.update(id, body);
   }
 }

@@ -1,10 +1,15 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './model/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { hashPassword } from 'src/utils/bcrypt.helper';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -48,5 +53,18 @@ export class UserService {
       email,
       password: hashedPassword,
     });
+  }
+
+  async update(id: number, data: UpdateUserDto): Promise<User> {
+    const user = await this.findOne({ id });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Merge new data into the user object
+    Object.assign(user, data);
+
+    return this.userRepository.save(user);
   }
 }
