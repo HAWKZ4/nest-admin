@@ -1,5 +1,6 @@
-import { isNotEmpty } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { User } from 'src/user/model/user.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('roles')
 export class Role {
@@ -8,4 +9,11 @@ export class Role {
 
   @Column()
   name: string;
+
+  @Exclude()
+  @Column()
+  code: number;
+
+  @OneToMany(() => User, (user) => user.role)
+  users: User[];
 }

@@ -47,7 +47,7 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Post('/users')
   async createUser(@Body() body: CreateUserDTO) {
-    return this.userService.create(body);
+    return this.userService.createUserWithDefaultPassword(body);
   }
 
   @UseGuards(AuthGuard)

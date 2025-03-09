@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { User } from 'src/user/model/user.entity';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -7,10 +11,16 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { Response } from 'express';
 import { hashPassword } from 'src/utils/bcrypt.helper';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Role } from 'src/role/model/role.entity';
+import { RoleEnum } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -25,12 +35,29 @@ export class AuthService {
 
     const hashedPassword = await hashPassword(password, this.configService);
 
-    return this.userService.create({
+    const userRole = await this.roleRepository.findOne({
+      where: {
+        code: RoleEnum.USER,
+      },
+    });
+
+    if (!userRole) {
+      throw new InternalServerErrorException('Role not found');
+    }
+
+    if (!userRole) {
+      throw new InternalServerErrorException('Role not found');
+    }
+
+    const newUser = this.userRepository.create({
       first_name,
       last_name,
       email,
       password: hashedPassword,
+      role: userRole,
     });
+
+    return this.userRepository.save(newUser);
   }
 
   async validateUser(email: string, password: string): Promise<User | null> {
