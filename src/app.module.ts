@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { JwtMiddleware } from './auth/jwt.middleware';
 import { RoleModule } from './role/role.module';
+import { PermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RoleModule } from './role/role.module';
     }),
     AuthModule,
     RoleModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
