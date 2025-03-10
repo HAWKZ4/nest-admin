@@ -13,6 +13,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './model/role.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { AssignPermissionsDto } from './dto/assign-permissions.dto';
 
 @Controller('roles')
 export class RoleController {
@@ -40,6 +41,12 @@ export class RoleController {
   @Post('')
   async createRole(@Body() body: CreateRoleDto) {
     return this.roleService.create(body);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/assign-permissions')
+  async assignPermissions(@Body() body: AssignPermissionsDto) {
+    return this.roleService.assignPermissionToRole(body);
   }
 
   @UseGuards(AuthGuard)
