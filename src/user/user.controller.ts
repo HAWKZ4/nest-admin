@@ -16,12 +16,13 @@ import { UserService } from './user.service';
 import { User } from './model/user.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateUserDTO } from './dto/create-user.dto';
-import { AuthRequest } from 'src/auth/auth-request.interface';
+import { AuthRequest } from 'src/common/types/auth-request';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from 'src/utils/dto/pagination.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller("users")
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -35,6 +36,24 @@ export class UserController {
   @Get('/me')
   async getMe(@Req() request: AuthRequest): Promise<User | null> {
     return this.userService.findOne({ id: request.user.id });
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('/me')
+  async updateProfile(
+    @Req() request: AuthRequest,
+    @Body() body: UpdateUserDto,
+  ) {
+    return this.userService.updateProfile(request?.user?.id, body);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('/me/password')
+  async updatePassword(
+    @Req() request: AuthRequest,
+    @Body() body: UpdatePasswordDto,
+  ) {
+    return this.userService.updatePassword(request?.user?.id, body);
   }
 
   @UseGuards(AuthGuard)

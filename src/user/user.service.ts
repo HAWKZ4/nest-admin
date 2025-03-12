@@ -15,6 +15,7 @@ import { PaginationDto } from 'src/utils/dto/pagination.dto';
 import { paginate } from 'src/utils/pagination';
 import { Role } from 'src/role/model/role.entity';
 import { RoleEnum } from 'src/common/enums/role.enum';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UserService {
@@ -111,5 +112,38 @@ export class UserService {
     }
 
     return this.userRepository.delete(id);
+  }
+
+  async updateProfile(userId: number, data: UpdateUserDto) {
+    const user = await this.findOne({ id: userId });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    Object.assign(user, data);
+    return this.userRepository.save(user);
+  }
+
+  async updatePassword(userId: number, data: UpdatePasswordDto) {
+    const { password, password_confirm } = data;
+
+    const user = await this.findOne({
+      id: userId,
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (password !== password_confirm) {
+      throw new BadRequestException('Passwords do not match!');
+    }
+
+    const hashedPassword = await hashPassword(password, this.configService);
+
+    user.password = hashedPassword;
+
+    return this.userRepository.save(user);
   }
 }
