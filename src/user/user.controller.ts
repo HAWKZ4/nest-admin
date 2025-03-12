@@ -21,42 +21,42 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from 'src/utils/dto/pagination.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller()
+@Controller("users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('users')
+  @Get()
   // We didn't specify a type because ts infers it from paginate()
   async getAllUsers(@Query() paginationDto: PaginationDto) {
     return this.userService.getAll(paginationDto);
   }
 
   @UseGuards(AuthGuard)
-  @Get('user')
-  async getUser(@Req() request: AuthRequest): Promise<User | null> {
+  @Get('/me')
+  async getMe(@Req() request: AuthRequest): Promise<User | null> {
     return this.userService.findOne({ id: request.user.id });
   }
 
   @UseGuards(AuthGuard)
-  @Get('users/:id')
+  @Get('/:id')
   async getUserById(@Param('id') id: number): Promise<User | null> {
     return this.userService.findOne({ id });
   }
 
   // Adjust guard later to restrict access
   @UseGuards(AuthGuard)
-  @Post('/users')
+  @Post()
   async createUser(@Body() body: CreateUserDTO) {
     return this.userService.createUserWithDefaultPassword(body);
   }
 
   @UseGuards(AuthGuard)
-  @Patch('/users/:id')
+  @Patch('/:id')
   async updateUser(@Param('id') id: number, @Body() body: UpdateUserDto) {
     return this.userService.update(id, body);
   }
 
-  @Delete('/users/:id')
+  @Delete('/:id')
   async deleteUser(@Param('id') id: number) {
     return this.userService.delete(id);
   }
