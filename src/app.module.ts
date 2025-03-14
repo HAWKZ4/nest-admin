@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtMiddleware } from './auth/jwt.middleware';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { PermissionModule } from './permission/permission.module';
     AuthModule,
     RoleModule,
     PermissionModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
