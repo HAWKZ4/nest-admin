@@ -6,8 +6,8 @@ import { ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 
 export async function paginate<T extends ObjectLiteral>(
   queryBuilderOrRepository: SelectQueryBuilder<T> | Repository<T>,
-  page: number,
-  limit: number,
+  page: number = 1,
+  limit: number = 10,
 ) {
   if (queryBuilderOrRepository instanceof SelectQueryBuilder) {
     // Use QueryBuilder logic

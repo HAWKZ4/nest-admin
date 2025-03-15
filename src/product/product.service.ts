@@ -15,7 +15,7 @@ export class ProductService {
   ) {}
 
   async getAllProducts(data: PaginationDto) {
-    const { page = 1, limit = 10 } = data;
+    const { page, limit } = data;
 
     return await paginate(this.productRepository, page, limit);
   }

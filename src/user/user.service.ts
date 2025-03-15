@@ -27,7 +27,7 @@ export class UserService {
   ) {}
 
   async getAll(data: PaginationDto) {
-    const { page = 1, limit = 10 } = data;
+    const { page, limit } = data;
     const queryBuilder = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.role', 'role');
