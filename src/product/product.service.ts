@@ -62,4 +62,24 @@ export class ProductService {
 
     return this.productRepository.save(product);
   }
+
+  async saveProductImage(
+    productId: number,
+    fileName: string,
+  ): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: {
+        id: productId,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found!');
+    }
+
+    // Saves the image filename in the database (not the full path, to avoid storage issues).
+    product.image = fileName;
+
+    return this.productRepository.save(product);
+  }
 }

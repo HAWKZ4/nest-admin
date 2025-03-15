@@ -7,13 +7,19 @@ import {
   Patch,
   Post,
   Query,
+  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { PaginationDto } from 'src/utils/dto/pagination.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/config/multer.config';
+import { Response } from 'express';
 
 @Controller('products')
 export class ProductController {
@@ -33,13 +39,10 @@ export class ProductController {
   async createProduct(@Body() body: CreateProductDto) {
     return this.productService.createProduct(body);
   }
-  
+
   @UseGuards(AuthGuard)
   @Patch('/:id')
-  async updateProduct(
-    @Param('id') id: number,
-    @Body() body: UpdateProductDto,
-  ) {
+  async updateProduct(@Param('id') id: number, @Body() body: UpdateProductDto) {
     return this.productService.updateProduct(id, body);
   }
 
@@ -48,4 +51,21 @@ export class ProductController {
     return this.productService.deleteProduct(id);
   }
 
+  @UseGuards(AuthGuard)
+  @Post('/upload/:id')
+  @UseInterceptors(FileInterceptor('image', multerConfig))
+  async uploadImage(
+    @Param('id') productId: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    // file.filename name after it's processed by multer config
+    return this.productService.saveProductImage(productId, file.filename);
+  }
+
+  @Get('/image/:filename')
+  async getImage(@Param('filename') filename: string, @Res() res: Response) {
+    return res.sendFile(filename, {
+      root: './uploads/products',
+    });
+  }
 }
