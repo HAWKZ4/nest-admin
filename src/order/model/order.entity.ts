@@ -19,6 +19,9 @@ export class Order {
   @Column()
   last_name: string;
 
+  @Column()
+  email: string;
+
   @CreateDateColumn()
   created_at: string;
 
