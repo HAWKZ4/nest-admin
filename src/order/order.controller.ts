@@ -1,8 +1,18 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { PaginationDto } from 'src/utils/dto/pagination.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}

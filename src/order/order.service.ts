@@ -6,6 +6,7 @@ import { PaginationDto } from 'src/utils/dto/pagination.dto';
 import { paginate } from 'src/utils/pagination';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderItem } from './model/order-item.entity';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class OrderService {
@@ -61,6 +62,7 @@ export class OrderService {
 
     await this.orderItemRepository.save(items);
 
-    return { ...order, orderItems: items };
+    // plainToInstance(Order, {...}) ensures NestJS correctly applies @Expose() and getters like total.
+    return plainToInstance(Order, { ...order, orderItems: items });
   }
 }
