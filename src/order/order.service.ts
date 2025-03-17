@@ -53,17 +53,31 @@ export class OrderService {
 
     await this.orderRepository.save(order);
 
-    // Save order items linked to this order
-    const items = orderItems.map((item) => {
-      return this.orderItemRepository.create({
+    const items = orderItems.map((item) =>
+      this.orderItemRepository.create({
         ...item,
-        order, // To Attach order reference
-      });
-    });
+        order, // Attach order reference
+      }),
+    );
 
     await this.orderItemRepository.save(items);
 
-    // plainToInstance(Order, {...}) ensures NestJS correctly applies @Expose() and getters like total.
-    return plainToInstance(Order, { ...order, orderItems: items });
+    const savedOrder = await this.orderRepository.findOne({
+      where: { id: order.id },
+      relations: ['orderItems'],
+    });
+
+    if (!savedOrder) {
+      throw new Error('Order not found after saving.');
+    }
+
+    // Transform the order (ensuring @Expose() works)
+    // This converts savedOrder into a full-fledged Order instance, enabling all class features like:
+    // Decorators (@Expose())
+    // Getters (get total())
+    // Class methods (if any exist)
+    const transformedOrder = plainToInstance(Order, savedOrder);
+
+    return transformedOrder;
   }
 }

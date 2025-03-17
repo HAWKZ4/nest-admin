@@ -25,11 +25,15 @@ export class Order {
   @CreateDateColumn()
   created_at: string;
 
+  @Expose()
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   orderItems: OrderItem[];
 
   @Expose()
   get total(): number {
-    return this.orderItems.reduce((acc, oi) => acc + oi.price * oi.quantity, 0);
+    return (this.orderItems ?? []).reduce(
+      (acc, oi) => acc + oi.price * oi.quantity,
+      0,
+    );
   }
 }
