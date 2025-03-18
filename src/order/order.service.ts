@@ -42,13 +42,12 @@ export class OrderService {
   }
 
   async createOrder(data: CreateOrderDto): Promise<Order> {
-    const { first_name, last_name, email, created_at, orderItems } = data;
+    const { first_name, last_name, email, orderItems } = data;
 
     const order = this.orderRepository.create({
       first_name,
       last_name,
       email,
-      created_at,
     });
 
     await this.orderRepository.save(order);

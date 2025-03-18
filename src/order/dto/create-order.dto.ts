@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsDateString,
   IsEmail,
   IsNotEmpty,
   IsString,
@@ -18,8 +17,6 @@ export class CreateOrderDto {
   @IsString()
   last_name: string;
 
-  @IsDateString()
-  created_at: string;
 
   @IsNotEmpty()
   @IsEmail()
