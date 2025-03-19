@@ -1,4 +1,3 @@
-
 import {
   Body,
   ClassSerializerInterceptor,
@@ -33,6 +32,11 @@ export class OrderController {
   @Get('/export')
   async exportOrders(@Res() response: Response) {
     return this.orderService.exportOrders(response);
+  }
+
+  @Get('/sales-chart')
+  async getSalesChart() {
+    return this.orderService.getSalesChart();
   }
 
   @Get('/:id')

@@ -130,4 +130,16 @@ export class OrderService {
       response.end();
     });
   }
+
+  async getSalesChart() {
+    // DATE is method for formating date
+    return this.orderRepository.query(`
+          SELECT DATE(o.created_at) AS date, 
+          SUM(oi.price * oi.quantity) AS total_revenue
+    FROM orders o
+    JOIN order_items oi ON o.id = oi.order_id
+    GROUP BY DATE(o.created_at)
+    ORDER BY date ASC;
+`);
+  }
 }
