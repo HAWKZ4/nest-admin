@@ -7,6 +7,10 @@ import { paginate } from 'src/utils/pagination';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderItem } from './model/order-item.entity';
 import { plainToInstance } from 'class-transformer';
+import { Response } from 'express';
+import { createObjectCsvStringifier } from 'csv-writer';
+import { Readable } from 'stream';
+import { format } from 'date-fns';
 
 @Injectable()
 export class OrderService {
@@ -78,5 +82,52 @@ export class OrderService {
     const transformedOrder = plainToInstance(Order, savedOrder);
 
     return transformedOrder;
+  }
+
+  async exportOrders(response: Response): Promise<void> {
+    const orders = await this.orderRepository.find({
+      relations: ['orderItems'],
+    });
+
+    const csvStringifier = createObjectCsvStringifier({
+      header: [
+        { id: 'id', title: 'Order ID' },
+        { id: 'first_name', title: 'First Name' },
+        { id: 'last_name', title: 'Last Name' },
+        { id: 'email', title: 'Email' },
+        { id: 'created_at', title: 'Created At' },
+        { id: 'orderItems', title: 'Order Items' },
+      ],
+    });
+
+    const csvData = orders.map((order) => ({
+      id: order.id,
+      first_name: order.first_name,
+      last_name: order.last_name,
+      email: order.email,
+      created_at: format(order.created_at, 'yyyy-MM-dd HH:mm:ss'),
+      orderItems: order.orderItems
+        .map(
+          (orderItem) =>
+            `${orderItem.product_title} (${orderItem.quantity} * ${orderItem.price})`,
+        )
+        .join(' | '),
+    }));
+
+    const csvStream = Readable.from([
+      csvStringifier.getHeaderString(),
+      csvStringifier.stringifyRecords(csvData),
+    ]);
+
+    response.setHeader('Content-Type', 'text/csv');
+    response.setHeader(
+      'Content-Disposition',
+      'attachement; filename: orders.csv',
+    );
+
+    csvStream.pipe(response).on('finish', () => {
+      console.log('Exported complete');
+      response.end();
+    });
   }
 }

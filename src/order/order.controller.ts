@@ -1,3 +1,4 @@
+
 import {
   Body,
   ClassSerializerInterceptor,
@@ -6,11 +7,13 @@ import {
   Param,
   Post,
   Query,
+  Res,
   UseInterceptors,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { PaginationDto } from 'src/utils/dto/pagination.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { Response } from 'express';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('orders')
@@ -22,13 +25,18 @@ export class OrderController {
     return this.orderService.getAllOrders(paginationDto);
   }
 
-  @Get('/:id')
-  async getOrder(@Param('id') id: number) {
-    return this.orderService.getOrder(id);
-  }
-
   @Post()
   async createOrder(@Body() createOrderDto: CreateOrderDto) {
     return this.orderService.createOrder(createOrderDto);
+  }
+
+  @Get('/export')
+  async exportOrders(@Res() response: Response) {
+    return this.orderService.exportOrders(response);
+  }
+
+  @Get('/:id')
+  async getOrder(@Param('id') id: number) {
+    return this.orderService.getOrder(id);
   }
 }
