@@ -20,12 +20,14 @@ import { AuthRequest } from 'src/common/types/auth-request';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from 'src/utils/dto/pagination.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { HasPermission } from 'src/permission/has-permission.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @HasPermission('view_users')
   @Get()
   // We didn't specify a type because ts infers it from paginate()
   async getAllUsers(@Query() paginationDto: PaginationDto) {

@@ -46,7 +46,7 @@ export class RoleController {
   @UseGuards(AuthGuard)
   @Post('/assign-permissions')
   async assignPermissions(@Body() body: AssignPermissionsDto) {
-    return this.roleService.assignPermissionToRole(body);
+    return this.roleService.assignPermissionsToRole(body);
   }
 
   @UseGuards(AuthGuard)

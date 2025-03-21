@@ -16,7 +16,7 @@ export class RoleService {
   ) {}
 
   async getAll(): Promise<Role[]> {
-    return this.roleRepository.find();
+    return this.roleRepository.find({ relations: ['permissions'] });
   }
 
   async findOne(condition: object): Promise<Role | null> {
@@ -26,7 +26,16 @@ export class RoleService {
   }
 
   async create(data: CreateRoleDto): Promise<Role> {
-    return this.roleRepository.save(data);
+    const { name, permissions } = data;
+    const permissionEntities = await this.permissionRepository.findBy({
+      id: In(permissions),
+    });
+    const role = this.roleRepository.create({
+      name,
+      permissions: permissionEntities, // Assign the fetched permission entities
+    });
+
+    return await this.roleRepository.save(role);
   }
 
   async update(id: number, data: UpdateRoleDto): Promise<Role> {
@@ -42,9 +51,10 @@ export class RoleService {
     return this.roleRepository.save(role);
   }
 
-  async assignPermissionToRole(data: AssignPermissionsDto) {
+  async assignPermissionsToRole(data: AssignPermissionsDto) {
+    const { roleId, permissions } = data;
     const role = await this.roleRepository.findOne({
-      where: { code: data.roleCode },
+      where: { id: roleId },
       relations: ['permissions'],
     });
 
@@ -52,15 +62,17 @@ export class RoleService {
       throw new NotFoundException('Role not found');
     }
 
-    const permissions = await this.permissionRepository.findBy({
-      id: In(data.permissions), // In() operator to find permissions whose id matches any of the IDs in the data.permissions array
+    const permissionEntites = await this.permissionRepository.find({
+      where: {
+        id: In(data.permissions),
+      }, // In() operator to find permissions whose id matches any of the IDs in the data.permissions array
     });
 
     if (!permissions.length) {
       throw new NotFoundException('Permissions not found');
     }
 
-    role.permissions = permissions;
+    role.permissions = permissionEntites;
     return this.roleRepository.save(role);
   }
 

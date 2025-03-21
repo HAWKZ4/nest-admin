@@ -14,7 +14,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from 'src/utils/dto/pagination.dto';
 import { paginate } from 'src/utils/pagination';
 import { Role } from 'src/role/model/role.entity';
-import { RoleEnum } from 'src/common/enums/role.enum';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
@@ -34,9 +33,13 @@ export class UserService {
     return await paginate(queryBuilder, page, limit);
   }
 
-  async findOne(condition: object): Promise<User | null> {
-    return await this.userRepository.findOne({
+  async findOne(
+    condition: object,
+    withRelations = false,
+  ): Promise<User | null> {
+    return this.userRepository.findOne({
       where: condition,
+      relations: withRelations ? ['role', 'role.permissions'] : [],
     });
   }
 
@@ -57,7 +60,7 @@ export class UserService {
 
     const userRole = await this.roleRepository.findOne({
       where: {
-        code: RoleEnum.USER,
+        id: 1,
       },
     });
 
@@ -86,7 +89,7 @@ export class UserService {
     if (data.roleCode) {
       const role = await this.roleRepository.findOne({
         where: {
-          code: data.roleCode,
+          id: 1,
         },
       });
 
