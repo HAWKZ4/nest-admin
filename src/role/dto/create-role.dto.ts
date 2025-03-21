@@ -11,10 +11,6 @@ export class CreateRoleDto {
   @IsNotEmpty()
   name: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  code: number;
-
   @IsArray()
   @ArrayNotEmpty()
   @IsNumber({}, { each: true })
