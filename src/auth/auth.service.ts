@@ -14,7 +14,6 @@ import { hashPassword } from 'src/utils/bcrypt.helper';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Role } from 'src/role/model/role.entity';
-import { RoleEnum } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -37,13 +36,9 @@ export class AuthService {
 
     const userRole = await this.roleRepository.findOne({
       where: {
-        code: RoleEnum.USER,
+        id: 1,
       },
     });
-
-    if (!userRole) {
-      throw new InternalServerErrorException('Role not found');
-    }
 
     if (!userRole) {
       throw new InternalServerErrorException('Role not found');

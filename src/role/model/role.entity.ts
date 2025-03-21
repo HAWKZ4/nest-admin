@@ -18,10 +18,6 @@ export class Role {
   @Column()
   name: string;
 
-  @Exclude()
-  @Column()
-  code: number;
-
   @OneToMany(() => User, (user) => user.role)
   users: User[];
 
@@ -29,7 +25,7 @@ export class Role {
     cascade: true,
   })
   @JoinTable({
-    name: "role_permissions"
+    name: 'role_permissions',
   })
   permissions: Permission[];
 }

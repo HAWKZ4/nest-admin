@@ -1,8 +1,9 @@
-import { ArrayNotEmpty, IsArray, IsInt, IsNumber } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty } from 'class-validator';
 
 export class AssignPermissionsDto {
-  @IsNumber()
-  roleCode: number;
+  @IsInt()
+  @IsNotEmpty()
+  roleId: number;
 
   @IsArray()
   @ArrayNotEmpty()
