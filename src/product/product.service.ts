@@ -29,7 +29,7 @@ export class ProductService {
   }
 
   async createProduct(data: CreateProductDto): Promise<Product | null> {
-    return this.productRepository.save(data);
+    return await this.productRepository.save(data);
   }
 
   async deleteProduct(id: number) {
@@ -60,7 +60,7 @@ export class ProductService {
 
     Object.assign(product, data);
 
-    return this.productRepository.save(product);
+    return await this.productRepository.save(product);
   }
 
   async saveProductImage(
@@ -80,6 +80,6 @@ export class ProductService {
     // Saves the image filename in the database (not the full path, to avoid storage issues).
     product.image = fileName;
 
-    return this.productRepository.save(product);
+    return await this.productRepository.save(product);
   }
 }

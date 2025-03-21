@@ -52,7 +52,7 @@ export class AuthService {
       role: userRole,
     });
 
-    return this.userRepository.save(newUser);
+    return await this.userRepository.save(newUser);
   }
 
   async validateUser(email: string, password: string): Promise<User | null> {

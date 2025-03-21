@@ -48,7 +48,7 @@ export class RoleService {
     // Merge new data into the role object
     Object.assign(role, data);
 
-    return this.roleRepository.save(role);
+    return await this.roleRepository.save(role);
   }
 
   async assignPermissionsToRole(data: AssignPermissionsDto) {
@@ -73,7 +73,7 @@ export class RoleService {
     }
 
     role.permissions = permissionEntites;
-    return this.roleRepository.save(role);
+    return await this.roleRepository.save(role);
   }
 
   async delete(id: number) {

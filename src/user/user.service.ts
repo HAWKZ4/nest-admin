@@ -76,7 +76,7 @@ export class UserService {
       role: userRole,
     });
 
-    return this.userRepository.save(newUser);
+    return await this.userRepository.save(newUser);
   }
 
   async update(id: number, data: UpdateUserDto): Promise<User> {
@@ -105,7 +105,7 @@ export class UserService {
     // Merge new data into the user object
     Object.assign(user, data);
 
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async delete(id: number) {
@@ -125,7 +125,7 @@ export class UserService {
     }
 
     Object.assign(user, data);
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async updatePassword(userId: number, data: UpdatePasswordDto) {
@@ -147,6 +147,6 @@ export class UserService {
 
     user.password = hashedPassword;
 
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 }
