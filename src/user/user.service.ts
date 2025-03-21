@@ -60,7 +60,7 @@ export class UserService {
 
     const userRole = await this.roleRepository.findOne({
       where: {
-        id: 1,
+        name: 'user',
       },
     });
 
@@ -89,7 +89,7 @@ export class UserService {
     if (data.roleCode) {
       const role = await this.roleRepository.findOne({
         where: {
-          id: 1,
+          name: 'user',
         },
       });
 
