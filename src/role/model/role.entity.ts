@@ -25,7 +25,7 @@ export class Role {
     cascade: true,
   })
   @JoinTable({
-    name: 'role_permissions',
+    name: 'roles_permissions',
   })
   permissions: Permission[];
 }
