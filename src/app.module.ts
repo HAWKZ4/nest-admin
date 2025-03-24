@@ -13,6 +13,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PermissionGuard } from './permission/permission.guard';
 import { DatabaseModule } from './database/database.module';
 import { CategoryModule } from './category/category.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CategoryModule } from './category/category.module';
     OrderModule,
     DatabaseModule,
     CategoryModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [

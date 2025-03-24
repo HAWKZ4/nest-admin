@@ -24,15 +24,18 @@ export class CategoryController {
     return await this.categoryService.createCategory(body);
   }
   @Get('/:id')
-  async getCategory(@Param() id: number): Promise<Category> {
+  async getCategory(@Param('id') id: number): Promise<Category> {
     return await this.categoryService.getCategory(id);
   }
   @Delete('/:id')
-  async deleteCategory(@Param() id: number): Promise<void> {
+  async deleteCategory(@Param('id') id: number): Promise<void> {
     return await this.categoryService.deleteCategory(id);
   }
   @Patch('/:id')
-  async updateCategory(@Param() id: number, @Body() body: UpdateCategoryDto) {
+  async updateCategory(
+    @Param('id') id: number,
+    @Body() body: UpdateCategoryDto,
+  ) {
     return this.categoryService.updateCategory(id, body);
   }
 }
